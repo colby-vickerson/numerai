@@ -8,16 +8,16 @@ import pytest
 from src.download.download_data import DownloadData
 
 
-@pytest.fixture
-def download_data_setup():
+@pytest.fixture(name="temp_directory_path")
+def create_temp_directory():
     """Set up directory for running tests"""
     with tempfile.TemporaryDirectory() as directory:
         yield directory
 
 
-def test_download_data(download_data_setup):
+def test_download_data(temp_directory_path):
     download_data_task = DownloadData(
-        output_directory=download_data_setup
+        output_directory=temp_directory_path
     )
 
     # Assert that the path does not exist prior to the task run
