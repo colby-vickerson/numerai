@@ -8,32 +8,52 @@ import pytest
 from src.download.download_data import DownloadData
 
 
-@pytest.fixture(name="temp_directory_path")
+@pytest.fixture(name="temp_directory_path", scope="module")
 def create_temp_directory():
     """Set up directory for running tests"""
     with tempfile.TemporaryDirectory() as directory:
         yield directory
 
 
-def test_download_data(temp_directory_path):
-    download_data_task = DownloadData(
+@pytest.fixture(name="download_data_task", scope="module")
+def instantiate_download_data_task(temp_directory_path):
+    """Instantiate the DownloadData task"""
+    yield DownloadData(
         output_directory=temp_directory_path
     )
 
-    # Assert that the path does not exist prior to the task run
-    assert not os.path.exists(
-        download_data_task.output().path
-    )
 
-    # Run the task
+@pytest.fixture(name="executed_download_data_task", scope="module")
+def run_download_data_task(download_data_task):
+    """Run the DownloadData task and yield the run task"""
     luigi.build(
         [
             download_data_task
         ],
         local_scheduler=True
     )
+    yield download_data_task
 
-    # Verify that the output exists
-    assert os.path.exists(
+
+def test_no_path_before_task_runs(download_data_task):
+    """Test that no path exists prior to the task being run"""
+    assert not os.path.exists(
         download_data_task.output().path
+    )
+
+
+def test_output_created(executed_download_data_task):
+    """Test that the output file exists after the task is run"""
+    assert os.path.exists(
+        executed_download_data_task.output().path
+    )
+
+
+def test_zip_file_deleted(executed_download_data_task):
+    """Verify that the zip file is deleted"""
+    assert not os.path.exists(
+        os.path.join(
+            executed_download_data_task.output_directory,
+            executed_download_data_task.get_zipped_current_tournament_file_name()
+        )
     )
