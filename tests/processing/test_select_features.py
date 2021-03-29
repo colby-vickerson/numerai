@@ -11,7 +11,7 @@ def instantiate_select_features_task(temp_directory_path):
         output_directory=temp_directory_path
     )
 
-    yield
+    yield select_feature_task
 
 
 def get_required_tasks(given_task):
@@ -21,7 +21,7 @@ def get_required_tasks(given_task):
 
 def save_data_to_task_output(task, data):
     """Save data to the tasks output location for testing purposes"""
-
+    pass
 
 
 def mock_select_features_input():
