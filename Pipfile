@@ -13,6 +13,8 @@ numpy = "*"
 numerapi = "*"
 pandas = "*"
 torch = "*"
+fastparquet = "*"
+pyarrow = "*"
 
 [requires]
 python_version = "3.6"

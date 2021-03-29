@@ -1,18 +1,10 @@
 """Contains tests for the download_data module"""
 import os
-import tempfile
 
 import luigi
 import pytest
 
 from src.download.download_data import DownloadData
-
-
-@pytest.fixture(name="temp_directory_path", scope="module")
-def create_temp_directory():
-    """Set up directory for running tests"""
-    with tempfile.TemporaryDirectory() as directory:
-        yield directory
 
 
 @pytest.fixture(name="download_data_task", scope="module")
