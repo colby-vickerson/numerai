@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import pytest
 
-import src.utils as utils
+import src.utils.generic_utils as utils
 
 
 def mock_dataframe():

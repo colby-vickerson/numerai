@@ -3,9 +3,11 @@ import os
 import luigi
 import numerapi
 import definitions
+from src.luigi.mixins import TaskMixin
+from src.luigi.salt import salted_target
 
 
-class DownloadData(luigi.Task):
+class DownloadTrainingData(TaskMixin):
     """Install data from Numerai"""
 
     output_directory: str = luigi.Parameter(
@@ -49,23 +51,17 @@ class DownloadData(luigi.Task):
         # Remove the zipped file
         self.remove_zipped_file()
 
-        # Write a success flag to the unzipped file
-        with open(self.output().path, "w") as file:
-            file.write(f"Downloaded data: {self.get_current_tournament_file_name()}")
-
     def output(self):
         output_path = os.path.join(
             self.output_directory,
             self.get_current_tournament_file_name(),
-            "SUCCESS.txt"
+            "numerai_training_data.csv"
         )
-        return luigi.LocalTarget(
-            output_path
-        )
+        return luigi.LocalTarget(output_path)
 
 
 if __name__ == "__main__":
-    download_data_task = DownloadData()
+    download_data_task = DownloadTrainingData()
     luigi.build(
         [
             download_data_task

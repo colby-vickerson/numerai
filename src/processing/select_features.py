@@ -2,28 +2,35 @@
 import os
 
 import luigi
-import pandas as pd
 
 import definitions
-from src.download.download_data import DownloadData
+from src.download.download_data import DownloadTrainingData
+from src.luigi.mixins import TaskMixin
+from src.luigi.salt import salted_target
 
 
-class SelectFeatures(luigi.Task):
+class SelectFeatures(TaskMixin):
+
+    output_directory: str = luigi.Parameter(
+        description="Absolute path to the output directory where the file is saved",
+        default=definitions.RAW_DATA_DIR
+    )
 
     FEATURE_COLUMN_PREFIX = "feature"
 
     def requires(self):
         """Requires that the data is first downloaded"""
-        return DownloadData()
+        return DownloadTrainingData()
 
     def output(self):
         """Where is the output file saved"""
         tournament_data_name = self.requires().get_current_tournament_file_name()
-        return luigi.LocalTarget(
+        return salted_target(
+            self,
             os.path.join(
                 definitions.DATA_DIR,
                 "features",
-                tournament_data_name + ".csv"
+                tournament_data_name + "_{salt}.csv"
             )
         )
 
@@ -34,16 +41,15 @@ class SelectFeatures(luigi.Task):
 
     def run(self):
         """Select the feature columns for modeling"""
-        tournament_data = pd.read_csv(self.requires().output().path)
+        tournament_data = self.requires().load_output()
 
-        print(tournament_data.head())
         feature_columns = self.select_feature_columns(tournament_data)
 
         feature_data = tournament_data.loc[:, feature_columns]
-        print(feature_data)
+
         os.makedirs(os.path.dirname(self.output().path), exist_ok=True)
 
-        feature_data.to_csv(self.output().path)
+        self.save_data(feature_data)
 
         return feature_data
 

@@ -4,13 +4,13 @@ import os
 import luigi
 import pytest
 
-from src.download.download_data import DownloadData
+from src.download.download_data import DownloadTrainingData
 
 
 @pytest.fixture(name="download_data_task", scope="module")
 def instantiate_download_data_task(temp_directory_path):
     """Instantiate the DownloadData task"""
-    yield DownloadData(
+    yield DownloadTrainingData(
         output_directory=temp_directory_path
     )
 

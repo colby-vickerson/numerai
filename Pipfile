@@ -15,6 +15,7 @@ pandas = "*"
 torch = "*"
 fastparquet = "*"
 pyarrow = "*"
+mock = "*"
 
 [requires]
 python_version = "3.6"

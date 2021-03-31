@@ -8,7 +8,9 @@ def save_pandas_dataframe(dataframe: pd.DataFrame, absolute_output_location: str
     elif absolute_output_location.endswith(".csv"):
         dataframe.to_csv(absolute_output_location, index=False)
     else:
-        raise LookupError("Unable to determine file type. Only support saving .csv and .parquet files.")
+        raise LookupError(
+            f"Unable to determine file type. Only support saving .csv and .parquet files. Path: {absolute_output_location}"
+        )
     return 1
 
 
@@ -19,4 +21,6 @@ def load_data_as_pandas(absolute_file_path):
     elif absolute_file_path.endswith(".csv"):
         return pd.read_csv(absolute_file_path)
     else:
-        raise LookupError("Unable to determine file type. Only support reading .csv and .parquet files.")
+        raise LookupError(
+            f"Unable to determine file type. Only support reading .csv and .parquet files. Path: {absolute_file_path}"
+        )
