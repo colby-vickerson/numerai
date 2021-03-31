@@ -1,10 +1,11 @@
 """Download the latest data from Numerai AI"""
 import os
+
 import luigi
 import numerapi
+
 import definitions
 from src.luigi.mixins import TaskMixin
-from src.luigi.salt import salted_target
 
 
 class DownloadTrainingData(TaskMixin):
