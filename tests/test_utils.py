@@ -41,20 +41,26 @@ def test_save_pandas_dataframe(temp_directory_path: str, file_name: str, raises_
 
 
 @pytest.mark.parametrize(
-    "file_name", [
-        "test_one.parquet.gzip",
-        "test_two.parquet",
-        "test_three.csv"
+    "file_name, raises_error", [
+        ("test_one.parquet.gzip", False),
+        ("test_two.parquet", False),
+        ("test_three.csv", False),
+        ("wrong.file", True)
     ]
 )
-def test_load_data_as_pandas_dataframe(temp_directory_path: str, file_name: str):
+def test_load_data_as_pandas_dataframe(temp_directory_path: str, file_name: str, raises_error: bool):
     absolute_output_path = os.path.join(
         temp_directory_path, file_name
     )
-    utils.save_pandas_dataframe(mock_dataframe(), absolute_output_path)
 
-    # Read in the dataframe
-    test_df = utils.load_data_as_pandas(absolute_output_path)
+    if raises_error:
+        with pytest.raises(LookupError):
+            utils.load_data_as_pandas(temp_directory_path)
+    else:
+        utils.save_pandas_dataframe(mock_dataframe(), absolute_output_path)
 
-    # Assert data same as saved mock data
-    pd.testing.assert_frame_equal(test_df, mock_dataframe())
+        # Read in the dataframe
+        test_df = utils.load_data_as_pandas(absolute_output_path)
+
+        # Assert data same as saved mock data
+        pd.testing.assert_frame_equal(test_df, mock_dataframe())
